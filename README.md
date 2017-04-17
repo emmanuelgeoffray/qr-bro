@@ -8,7 +8,9 @@ sudo pip install pathlib
 
 ## Run
 
+```
 python qr-bro.py
+```
 
 ## Result
 
