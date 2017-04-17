@@ -5,8 +5,46 @@ import qrcode.image.svg
 import xml.etree.ElementTree as ET
 from spacebro_client import SpacebroClient
 from pathlib import Path
+import json
+import os
+import sys, getopt
 
-template = ET.parse("recipes/qrcode-path.svg").getroot()
+settings_files = ["settings/settings.default.json", "settings/settings.json"]
+settings = {}
+# get argv
+def help():
+    print 'qr-bro.py --settings <settingsfile>'
+    print '-s <settingsfile>, --settings <settingsfile>'
+    print '\t json settings file'
+
+try:
+  opts, args = getopt.getopt(sys.argv[1:],"hs:",["settings="])
+except getopt.GetoptError:
+  help()
+  sys.exit(2)
+for opt, arg in opts:
+  if opt == '-h':
+     help()
+     sys.exit()
+  elif opt in ("-s", "--settings"):
+     settings_files.append(arg)
+
+# get settings
+for file in settings_files:
+  try:
+    with open(file) as settings_file:    
+        settings.update(json.load(settings_file))
+  except IOError:
+    pass
+
+
+
+# get template
+template = ET.parse(settings['recipe']).getroot()
+
+# init folders
+if not os.path.exists(settings['folder']['output']):
+      os.makedirs(settings['folder']['output'])
 
 def make_qrcode(input_url, file_name):
 
@@ -36,15 +74,21 @@ def on_new_media(args):
     #print('on_new_media', args)
     #print('type', type (args))
     #print('file', args['file'])
-    file_name = Path(args['file']).stem + '.svg'
+    file_name = os.path.join(settings['folder']['output'], Path(args['file']).stem + '.svg')
     make_qrcode(args['src'], file_name)
 
 #make_qrcode('https://doublechee.se/en', "qrcode.svg")
 #make_qrcode('https://drive.google.com/drive/u/0/folders/0Bx68fA5yBZLwS0lWZG9fSzNCTk0', "qrcode_fr.svg")
-socketIO = SpacebroClient('localhost', 8888, {'clientName': 'qr-bro', 'channelName': 'zhaoxiangjs', 'verbose': False})
+socketIO = SpacebroClient(settings['service']['spacebro']['host'], settings['service']['spacebro']['port'], {'clientName': settings['service']['spacebro']['clientName'], 'channelName': settings['service']['spacebro']['channelName'], 'verbose': False})
 
 # Listen
 socketIO.wait(seconds=1)
-socketIO.on('video-saved', on_new_media)
+socketIO.on(settings['service']['spacebro']['inputMessage'], on_new_media)
 socketIO.emit('album-saved', {'src': '/home/emmanuel/Videos/2017-03-08T11-07-35-698'})
 socketIO.wait()
+
+# TODO
+
+# settings in commandline
+# output message on spacebro when svg ready
+

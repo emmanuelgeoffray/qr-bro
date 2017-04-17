@@ -1,0 +1,16 @@
+{
+  "service": {
+    "spacebro":{
+      "host": "spacebro.space",
+      "port": 3333,
+      "clientName": "qr-bro",
+      "channelName": "qr-bro",
+      "inputMessage": "new-media-for-qr-bro",
+      "outputMessage": "new-media-from-qr-bro"
+    }
+  },
+  "recipe": "recipes/qrcode-path.svg",
+  "folder":{
+    "output": "/tmp/qr-bro"
+  }
+}
