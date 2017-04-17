@@ -77,15 +77,15 @@ def on_new_media(args):
     file_path = os.path.join(settings['folder']['output'], file_name)
     make_qrcode(args['src'], file_path)
     args['details']['qrcode'] = {'file': file_name, 'type': 'image/svg+xml', 'source': file_path}
-    socketIO.emit(settings['service']['spacebro']['outputMessage'], args)
+    spacebro.emit(settings['service']['spacebro']['outputMessage'], args)
 
 
 #make_qrcode('https://doublechee.se/en', "qrcode.svg")
-socketIO = SpacebroClient(settings['service']['spacebro']['host'], settings['service']['spacebro']['port'], {'clientName': settings['service']['spacebro']['clientName'], 'channelName': settings['service']['spacebro']['channelName'], 'verbose': False})
+spacebro = SpacebroClient(settings['service']['spacebro']['host'], settings['service']['spacebro']['port'], {'clientName': settings['service']['spacebro']['clientName'], 'channelName': settings['service']['spacebro']['channelName'], 'verbose': False})
 
 # Listen
-socketIO.wait(seconds=1)
-socketIO.on(settings['service']['spacebro']['inputMessage'], on_new_media)
-socketIO.emit('album-saved', {'src': '/home/emmanuel/Videos/2017-03-08T11-07-35-698'})
-socketIO.wait()
+spacebro.wait(seconds=1)
+spacebro.on(settings['service']['spacebro']['inputMessage'], on_new_media)
+spacebro.emit('album-saved', {'src': '/home/emmanuel/Videos/2017-03-08T11-07-35-698'})
+spacebro.wait()
 
