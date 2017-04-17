@@ -10,4 +10,4 @@ python qr-bro.py
 
 ## Result
 
-![](https://github.com/ssoixantecircuits/qr-bro/blob/master/recipes/qrcode-path.svg)
+![](https://github.com/soixantecircuits/qr-bro/blob/master/recipes/qrcode-path.svg)
