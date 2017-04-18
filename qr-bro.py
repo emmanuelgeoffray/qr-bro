@@ -32,7 +32,7 @@ for opt, arg in opts:
 # get settings
 for file in settings_files:
   try:
-    with open(file) as settings_file:    
+    with open(file) as settings_file:
         settings.update(json.load(settings_file))
   except IOError:
     pass
@@ -58,24 +58,25 @@ def make_qrcode(input_url, file_name):
     path_template = path_template[0]
     path_img = path_img[0]
     path_template.set('d', path_img.get('d'))
-    
+
     symbol_template = template.findall(".//*[@id='qr-code']")[0]
     symbol_template.set('viewBox', img._img.get('viewBox'))
     img._img = template
   else:
     print "Issue with svg, path not found"
 
-  image_file = open(file_name, 'w+') 
+  image_file = open(file_name, 'w+')
   ET.ElementTree(img._img).write(image_file, encoding="UTF-8",
                                           xml_declaration=True)
-  image_file.close() 
+  image_file.close()
 
 def on_new_media(args):
     #print('on_new_media', args)
     #print('file', args['file'])
     file_name = Path(args['file']).stem + '.svg'
     file_path = os.path.join(settings['folder']['output'], file_name)
-    make_qrcode(args['src'], file_path)
+    make_qrcode(args['path'], file_path)
+    args['details'] = {}
     args['details']['qrcode'] = {'file': file_name, 'type': 'image/svg+xml', 'source': file_path}
     spacebro.emit(settings['service']['spacebro']['outputMessage'], args)
 
@@ -88,4 +89,3 @@ spacebro.wait(seconds=1)
 spacebro.on(settings['service']['spacebro']['inputMessage'], on_new_media)
 spacebro.emit('album-saved', {'src': '/home/emmanuel/Videos/2017-03-08T11-07-35-698'})
 spacebro.wait()
-
