@@ -4,6 +4,7 @@ QR bro is a tool to generate QR codes in the [spacebro](https://github.com/space
 ```
 sudo pip install qrcode
 sudo pip install pathlib
+sudo pip install socketIO_client
 ```
 
 ## Run
