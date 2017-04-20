@@ -76,7 +76,8 @@ def on_new_media(args):
     file_name = Path(args['file']).stem + '.svg'
     file_path = os.path.join(settings['folder']['output'], file_name)
     make_qrcode(args['path'], file_path)
-    args['details'] = {}
+    if args['details'] == None:
+      args['details'] = {}
     args['details']['qrcode'] = {'file': file_name, 'type': 'image/svg+xml', 'source': file_path}
     spacebro.emit(settings['service']['spacebro']['outputMessage'], args)
 
@@ -87,5 +88,5 @@ spacebro = SpacebroClient(settings['service']['spacebro']['host'], settings['ser
 # Listen
 spacebro.wait(seconds=1)
 spacebro.on(settings['service']['spacebro']['inputMessage'], on_new_media)
-spacebro.emit('album-saved', {'src': '/home/emmanuel/Videos/2017-03-08T11-07-35-698'})
+#spacebro.emit('album-saved', {'src': '/home/emmanuel/Videos/2017-03-08T11-07-35-698'})
 spacebro.wait()
