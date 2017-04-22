@@ -102,7 +102,7 @@ def on_new_media(args):
     make_png(file_path, png_file_path)
     args.setdefault('details', {})
     args['details']['qrcode'] = {'file': file_name, 'type': 'image/svg+xml', 'source': file_path}
-    # args['details']['qrcode-png'] = {'file': png_file_name, 'type': 'image/png', 'source': png_file_path}
+    args['details']['qrcode-png'] = {'file': png_file_name, 'type': 'image/png', 'source': png_file_path}
     spacebro.emit(settings['service']['spacebro']['outputMessage'], args)
 
 
