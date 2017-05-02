@@ -71,7 +71,7 @@ python qr-bro.py -s path/to/settings.json
 
 ## 🕳 Troubleshooting
 
-[] Awaiting ...
+[ ] Awaiting ...
 
 ## ❤️ Contribute
 
