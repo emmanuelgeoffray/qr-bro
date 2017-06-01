@@ -94,23 +94,26 @@ def make_png (svg_file_path, png_file_path) :
 def on_new_media(args):
     #print('on_new_media', args)
     #print('file', args['file'])
-    file_name = Path(args['uri']).stem + '.svg'
+    file_name = Path(args['url']).stem + '.svg'
     file_path = os.path.join(settings['folder']['output'], file_name)
-    make_qrcode(args['uri'], file_path)
-    png_file_name = Path(args['uri']).stem + '.png'
+    make_qrcode(args['url'], file_path)
+    png_file_name = Path(args['url']).stem + '.png'
     png_file_path = os.path.join(settings['folder']['output'], png_file_name)
     make_png(file_path, png_file_path)
     args.setdefault('details', {})
-    args['details']['qrcode'] = {'file': file_name, 'type': 'image/svg+xml', 'source': file_path}
-    args['details']['qrcode-png'] = {'file': png_file_name, 'type': 'image/png', 'source': png_file_path}
+    args['details']['qrcode'] = {'file': file_name, 'type': 'image/svg+xml', 'path': file_path}
+    args['details']['qrcode-png'] = {'file': png_file_name, 'type': 'image/png', 'path': png_file_path}
     spacebro.emit(settings['service']['spacebro']['outputMessage'], args)
+    print 'new qr code generated'
+    print args
 
 
 #make_qrcode('https://doublechee.se/en', "qrcode.svg")
+print "Connecting to spacebro on ", settings['service']['spacebro']['host'], settings['service']['spacebro']['port'], '@',settings['service']['spacebro']['channelName']
 spacebro = SpacebroClient(settings['service']['spacebro']['host'], settings['service']['spacebro']['port'], {'clientName': settings['service']['spacebro']['clientName'], 'channelName': settings['service']['spacebro']['channelName'], 'verbose': False})
 
 # Listen
 spacebro.wait(seconds=1)
 spacebro.on(settings['service']['spacebro']['inputMessage'], on_new_media)
-spacebro.emit(settings['service']['spacebro']['inputMessage'], {'uri': '/home/emmanuel/Videos/2017-03-08T11-07-35-698-png'})
+#spacebro.emit(settings['service']['spacebro']['inputMessage'], {'url': 'https://github.com:soixantecircuits/qr-bro.git'})
 spacebro.wait()

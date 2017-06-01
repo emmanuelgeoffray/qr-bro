@@ -4,7 +4,7 @@
       "host": "spacebro.space",
       "port": 3333,
       "clientName": "qr-bro",
-      "channelName": "qr-bro",
+      "channelName": "media-stream",
       "inputMessage": "new-media-for-qr-bro",
       "outputMessage": "new-media-from-qr-bro"
     }
