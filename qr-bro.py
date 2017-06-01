@@ -11,6 +11,7 @@ import sys, getopt
 from wand.api import library
 import wand.color
 import wand.image
+import urlparse
 
 settings_files = ["settings/settings.default.json", "settings/settings.json"]
 settings = {}
@@ -94,6 +95,8 @@ def make_png (svg_file_path, png_file_path) :
 def on_new_media(args):
     #print('on_new_media', args)
     #print('file', args['file'])
+    if not 'url' in args:
+      args['url'] = urlparse.urljoin(settings['defaultUrl'], args['file'])
     file_name = Path(args['url']).stem + '.svg'
     file_path = os.path.join(settings['folder']['output'], file_name)
     make_qrcode(args['url'], file_path)
@@ -116,4 +119,5 @@ spacebro = SpacebroClient(settings['service']['spacebro']['host'], settings['ser
 spacebro.wait(seconds=1)
 spacebro.on(settings['service']['spacebro']['inputMessage'], on_new_media)
 #spacebro.emit(settings['service']['spacebro']['inputMessage'], {'url': 'https://github.com:soixantecircuits/qr-bro.git'})
+spacebro.emit(settings['service']['spacebro']['inputMessage'], {'file': 'file.png'})
 spacebro.wait()

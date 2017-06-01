@@ -10,6 +10,7 @@
     }
   },
   "recipe": "recipes/qrcode-path.svg",
+  "defaultUrl": "http://localhost/",
   "folder":{
     "output": "/tmp/qr-bro"
   }
