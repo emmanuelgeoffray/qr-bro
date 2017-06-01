@@ -96,7 +96,7 @@ def on_new_media(args):
     #print('on_new_media', args)
     #print('file', args['file'])
     if not 'url' in args:
-      args['url'] = urlparse.urljoin(settings['defaultUrl'], args['file'])
+      args['url'] = urlparse.urljoin(settings['defaultUrl'], args['file'].replace(".","-"))
     file_name = Path(args['url']).stem + '.svg'
     file_path = os.path.join(settings['folder']['output'], file_name)
     make_qrcode(args['url'], file_path)
