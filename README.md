@@ -58,6 +58,10 @@ python qr-bro.py --settings path/to/settings.json
 python qr-bro.py -s path/to/settings.json
 ```
 
+The app generates qr-codes vor every media received on spacebro.
+The link in the qr-code will be `media.url` if defined,
+or `settings.defaultUrl` + `media.file` .
+
 ### help
 
 `python qr-bro.py --help`
