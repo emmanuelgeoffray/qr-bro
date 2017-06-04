@@ -1,4 +1,8 @@
 {
+  "server":{
+    "host": "localhost",
+    "port": 6090
+  },
   "service": {
     "spacebro":{
       "host": "spacebro.space",

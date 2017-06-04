@@ -4,6 +4,8 @@ import qrcode
 import qrcode.image.svg
 import xml.etree.ElementTree as ET
 from spacebro_client import SpacebroClient
+from RootedHTTPServer import RootedHTTPServer
+from RootedHTTPServer import RootedHTTPRequestHandler
 from pathlib import Path
 import json
 import os
@@ -12,6 +14,7 @@ from wand.api import library
 import wand.color
 import wand.image
 import urlparse
+import threading
 
 settings_files = ["settings/settings.default.json", "settings/settings.json"]
 settings = {}
@@ -103,13 +106,39 @@ def on_new_media(args):
     png_file_name = Path(args['url']).stem + '.png'
     png_file_path = os.path.join(settings['folder']['output'], png_file_name)
     make_png(file_path, png_file_path)
+    static_path = 'http://' + settings['server']['host'] + ':' + str(settings['server']['port'])
     args.setdefault('details', {})
-    args['details']['qrcode'] = {'file': file_name, 'type': 'image/svg+xml', 'path': file_path}
-    args['details']['qrcode-png'] = {'file': png_file_name, 'type': 'image/png', 'path': png_file_path}
+    args['details']['qrcode'] = {
+      'file': file_name,
+      'type': 'image/svg+xml',
+      'path': file_path,
+      'url' : urlparse.urljoin(static_path, file_name)
+    }
+    args['details']['qrcode-png'] = {
+      'file': png_file_name,
+      'type': 'image/png',
+      'path': png_file_path,
+      'url' : urlparse.urljoin(static_path, png_file_name)
+    }
     spacebro.emit(settings['service']['spacebro']['outputMessage'], args)
     print 'new qr code generated'
     print args
 
+# start static servero
+def worker():
+  server_address = ('', settings['server']['port'])
+  httpd = RootedHTTPServer(settings['folder']['output'], server_address, RootedHTTPRequestHandler)
+
+  sa = httpd.socket.getsockname()
+  print "Serving HTTP on", sa[0], "port", sa[1], "..."
+  httpd.serve_forever()
+
+t = threading.Thread(target=worker)
+t.daemon = True
+try:
+  t.start()
+except KeyboardInterrupt:
+  sys.exit(0)
 
 #make_qrcode('https://doublechee.se/en', "qrcode.svg")
 print "Connecting to spacebro on ", settings['service']['spacebro']['host'], settings['service']['spacebro']['port'], '@',settings['service']['spacebro']['channelName']
@@ -119,5 +148,6 @@ spacebro = SpacebroClient(settings['service']['spacebro']['host'], settings['ser
 spacebro.wait(seconds=1)
 spacebro.on(settings['service']['spacebro']['inputMessage'], on_new_media)
 #spacebro.emit(settings['service']['spacebro']['inputMessage'], {'url': 'https://github.com:soixantecircuits/qr-bro.git'})
-spacebro.emit(settings['service']['spacebro']['inputMessage'], {'file': 'file.png'})
+#spacebro.emit(settings['service']['spacebro']['inputMessage'], {'file': 'file.png'})
 spacebro.wait()
+
